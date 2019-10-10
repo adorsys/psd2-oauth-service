@@ -1,0 +1,22 @@
+spring:
+  application.name: oauth-service
+  main:
+    allow-bean-definition-overriding: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: @project.description@
+    version: @project.version@
+    artifactId: @project.artifactId@
+
+server:
+  # Authorization HTTP header requires to enlarge max header size.
+  max-http-header-size: 65000
+
+---
+spring:
+  profiles: dev
+  redis:
+    host: localhost
+    port: 6379
