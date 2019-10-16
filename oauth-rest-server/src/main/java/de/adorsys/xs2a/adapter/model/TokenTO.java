@@ -2,7 +2,6 @@ package de.adorsys.xs2a.adapter.model;
 
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class TokenTO {
     private String id;

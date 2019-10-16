@@ -23,11 +23,17 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <artifactId>xs2a-adapter-service-remote</artifactId>
+            <version>0.0.4-SNAPSHOT</version>
+        </dependency>
+
         <!-- spring dependencies -->
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <artifactId>spring-webmvc</artifactId>
         </dependency>
 
         <dependency>
@@ -70,6 +76,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- jackson  -->
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- other dependencies -->
 
         <dependency>
@@ -95,6 +108,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>5.1.10.RELEASE</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
