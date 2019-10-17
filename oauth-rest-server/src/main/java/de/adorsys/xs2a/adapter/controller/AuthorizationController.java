@@ -25,6 +25,8 @@ import de.adorsys.xs2a.adapter.rest.psd2.model.TokenResponseTO;
 import de.adorsys.xs2a.adapter.service.RequestHeaders;
 import de.adorsys.xs2a.adapter.service.TokenService;
 import de.adorsys.xs2a.adapter.service.model.TokenBO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -42,6 +44,7 @@ import java.util.Map;
 
 @Controller
 public class AuthorizationController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizationController.class);
 
     static final String AUTHORIZATION_CODE_ENDPOINT = "/oauth2/{bank}/authorization-code";
     static final String CODE_PARAMETER = "code";
@@ -109,6 +112,9 @@ public class AuthorizationController {
             }
 
             tokenService.save(buildToken(token, stateTO));
+            logger.info("Token successfully obtained and stored to db");
+            logger.debug("Token could be retrieved by uri: /oauth2/tokens/{}", stateTO.getClientId());
+
             redirectAttributes.addFlashAttribute("clientId", stateTO.getClientId());
             return new RedirectView(successUrl);
         }
@@ -118,10 +124,15 @@ public class AuthorizationController {
 
     private TokenResponseTO getToken(String bank, String code, StateTO stateTO) throws OAuthRestException {
         Map<String, String> headers = buildHeaders(stateTO);
+        logger.debug("Headers are {}", headers);
+
         Map<String, String> params = buildParams(bank, code);
+        logger.debug("Parameters are {}", params);
+
         TokenResponseTO token;
         try {
             token = oauth2Client.getToken(headers, params);
+            logger.debug("Access token is {}", token);
         } catch (Exception e) {
             throw new OAuthRestException("xs2a-adapter_error", e.getMessage());
         }
@@ -129,6 +140,7 @@ public class AuthorizationController {
     }
 
     private RedirectView redirectToErrorPage(String error, String errorDescription, String errorUri, RedirectAttributes redirectAttributes) {
+        logger.error("Error with code={} was appeared. Details: {}", error, errorDescription);
         redirectAttributes.addFlashAttribute("errorCode", error);
         redirectAttributes.addFlashAttribute("errorDescription", errorDescription);
         redirectAttributes.addFlashAttribute("errorUri", errorUri);
@@ -140,10 +152,12 @@ public class AuthorizationController {
     }
 
     private StateTO decodeState(String state) throws OAuthRestException {
+        logger.debug("Try to decode state={}", state);
         StateTO stateTO;
         try {
             byte[] bytes = Base64.getDecoder().decode(state.getBytes());
             stateTO = objectMapper.readValue(bytes, StateTO.class);
+            logger.debug("Decoded state is {}", stateTO);
         } catch (IOException e) {
             throw new OAuthRestException("corrupted_state", "Could not decode state. Seems it was corrupted");
         }
