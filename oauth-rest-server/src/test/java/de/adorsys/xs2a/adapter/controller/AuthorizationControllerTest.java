@@ -1,4 +1,4 @@
-package de.adorsys.xs2a.adapter.resource;
+package de.adorsys.xs2a.adapter.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.xs2a.adapter.resource.AuthorizationController.*;
+import static de.adorsys.xs2a.adapter.controller.AuthorizationController.*;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

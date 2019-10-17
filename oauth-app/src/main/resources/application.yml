@@ -59,8 +59,8 @@ xs2a-adapter:
 
 oauth:
   redirect:
-    success-url:
-    error-url:
+    success-url: /success
+    error-url: /error
   bank-config:
     adorsys:
       client-id: ADORSYS_CLIENT_ID

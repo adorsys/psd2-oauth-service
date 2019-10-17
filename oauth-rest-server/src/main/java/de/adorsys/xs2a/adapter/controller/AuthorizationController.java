@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.xs2a.adapter.resource;
+package de.adorsys.xs2a.adapter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
 import de.adorsys.xs2a.adapter.config.BankConfig;
+import de.adorsys.xs2a.adapter.exception.OAuthRestException;
 import de.adorsys.xs2a.adapter.model.StateTO;
 import de.adorsys.xs2a.adapter.rest.psd2.model.TokenResponseTO;
 import de.adorsys.xs2a.adapter.service.RequestHeaders;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
@@ -92,39 +94,66 @@ public class AuthorizationController {
             @RequestParam(STATE_PARAMETER) String state,
             @RequestParam(value = ERROR_PARAMETER, required = false) String error,
             @RequestParam(value = ERROR_DESCRIPTION_PARAMETER, required = false) String errorDescription,
-            @RequestParam(value = ERROR_URI_PARAMETER, required = false) String errorUri
-    ) throws IOException {
-        String redirectUrl = errorUrl;
-
+            @RequestParam(value = ERROR_URI_PARAMETER, required = false) String errorUri,
+            RedirectAttributes redirectAttributes
+    ) {
         if (error == null || error.isEmpty()) {
-            redirectUrl = successUrl;
+            StateTO stateTO;
+            TokenResponseTO token;
+            try {
+                stateTO = decodeState(state);
 
-            StateTO stateTO = decodeState(state);
-
-            TokenResponseTO token = oauth2Client.getToken(buildHeaders(stateTO), buildParams(bank, code));
+                token = getToken(bank, code, stateTO);
+            } catch (OAuthRestException e) {
+                return redirectToErrorPage(e, redirectAttributes);
+            }
 
             tokenService.save(buildToken(token, stateTO));
+            redirectAttributes.addFlashAttribute("clientId", stateTO.getClientId());
+            return new RedirectView(successUrl);
         }
 
-        return new RedirectView(redirectUrl);
+        return redirectToErrorPage(error, errorDescription, errorUri, redirectAttributes);
     }
 
-    private StateTO decodeState(String state) {
+    private TokenResponseTO getToken(String bank, String code, StateTO stateTO) throws OAuthRestException {
+        Map<String, String> headers = buildHeaders(stateTO);
+        Map<String, String> params = buildParams(bank, code);
+        TokenResponseTO token;
+        try {
+            token = oauth2Client.getToken(headers, params);
+        } catch (Exception e) {
+            throw new OAuthRestException("xs2a-adapter_error", e.getMessage());
+        }
+        return token;
+    }
+
+    private RedirectView redirectToErrorPage(String error, String errorDescription, String errorUri, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("errorCode", error);
+        redirectAttributes.addFlashAttribute("errorDescription", errorDescription);
+        redirectAttributes.addFlashAttribute("errorUri", errorUri);
+        return new RedirectView(errorUrl);
+    }
+
+    private RedirectView redirectToErrorPage(OAuthRestException e, RedirectAttributes redirectAttributes) {
+        return redirectToErrorPage(e.getCode(), e.getDescription(), e.getUri(), redirectAttributes);
+    }
+
+    private StateTO decodeState(String state) throws OAuthRestException {
         StateTO stateTO;
         try {
             byte[] bytes = Base64.getDecoder().decode(state.getBytes());
             stateTO = objectMapper.readValue(bytes, StateTO.class);
         } catch (IOException e) {
-//            todo: replace with custom exception
-            throw new IllegalStateException();
+            throw new OAuthRestException("corrupted_state", "Could not decode state. Seems it was corrupted");
         }
         return stateTO;
     }
 
-    private Map<String, String> buildParams(String bank, String code) {
+    private Map<String, String> buildParams(String bank, String code) throws OAuthRestException {
         Map<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
-        params.put("authorization_code", code);
+        params.put("code", code);
         params.put("redirect_uri", bankConfig.getRedirectUri(bank));
         params.put("client_id", bankConfig.getClientId(bank));
         return params;

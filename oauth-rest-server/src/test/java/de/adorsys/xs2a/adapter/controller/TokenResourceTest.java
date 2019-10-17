@@ -1,4 +1,4 @@
-package de.adorsys.xs2a.adapter.resource;
+package de.adorsys.xs2a.adapter.controller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class TokenResourceTest {
     private MockMvc mockMvc;
 
     @InjectMocks
-    private TokenResource resource;
+    private TokenController resource;
 
     @Mock
     private TokenService tokenService;

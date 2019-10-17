@@ -16,6 +16,7 @@
 
 package de.adorsys.xs2a.adapter.config;
 
+import de.adorsys.xs2a.adapter.exception.OAuthRestException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,19 +38,19 @@ public class BankConfig {
         this.bankConfig = bankConfig;
     }
 
-    public String getClientId(String bank){
+    public String getClientId(String bank) throws OAuthRestException {
         isBankSupported(bank);
         return bankConfig.get(bank).get(CLIENT_ID);
     }
 
-    public String getRedirectUri(String bank) {
+    public String getRedirectUri(String bank) throws OAuthRestException {
         isBankSupported(bank);
         return bankConfig.get(bank).get(REDIRECT_URI);
     }
 
-    private void isBankSupported(String bank) {
+    private void isBankSupported(String bank) throws OAuthRestException {
         if (!bankConfig.containsKey(bank)) {
-            throw new IllegalArgumentException(bank+" is not supported by psd2-oauth service");
+            throw new OAuthRestException("bank_not_supported",bank+" is not supported by psd2-oauth service");
         }
     }
 }
