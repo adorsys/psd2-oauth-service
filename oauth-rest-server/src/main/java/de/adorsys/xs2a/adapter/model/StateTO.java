@@ -18,7 +18,7 @@ package de.adorsys.xs2a.adapter.model;
 
 public class StateTO {
     private String clientId;
-    private String adapterId;
+    private String aspspId;
 
     public String getClientId() {
         return clientId;
@@ -28,11 +28,11 @@ public class StateTO {
         this.clientId = clientId;
     }
 
-    public String getAdapterId() {
-        return adapterId;
+    public String getAspspId() {
+        return aspspId;
     }
 
-    public void setAdapterId(String adapterId) {
-        this.adapterId = adapterId;
+    public void setAspspId(String aspspId) {
+        this.aspspId = aspspId;
     }
 }

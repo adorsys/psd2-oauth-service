@@ -21,6 +21,20 @@ oauth:
   redirect:
     success-url:
     error-url:
+  bank-config:
+    adorsys:
+      client-id:
+      redirect-uri:
+    commerzbank:
+      client-id:
+      redirect-uri:
+    comdirect:
+      client-id:
+      redirect-uri:
+    ing:
+      client-id:
+      redirect-uri:
+
 
 xs2a-adapter:
   url:
@@ -39,3 +53,24 @@ spring:
   redis:
     host: localhost
     port: 6379
+
+xs2a-adapter:
+  url: http://localhost:8999
+
+oauth:
+  redirect:
+    success-url:
+    error-url:
+  bank-config:
+    adorsys:
+      client-id: ADORSYS_CLIENT_ID
+      redirect-uri: https://adorsys.de
+    commerzbank:
+      client-id: VALID_CLIENT_ID
+      redirect-uri: https://client.example.com/cb
+    comdirect:
+      client-id: VALID_CLIENT_ID
+      redirect-uri: https://client.example.com/cb
+    ing:
+      client-id:
+      redirect-uri: https://client.example.com/cb

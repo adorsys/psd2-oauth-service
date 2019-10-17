@@ -10,7 +10,7 @@ public class TokenBO {
     private Long expiresInSeconds;
     private String refreshToken;
     private String scope;
-    private String adapterId;
+    private String aspspId;
 
     public String getId() {
         return id;
@@ -60,12 +60,12 @@ public class TokenBO {
         this.scope = scope;
     }
 
-    public String getAdapterId() {
-        return adapterId;
+    public String getAspspId() {
+        return aspspId;
     }
 
-    public void setAdapterId(String adapterId) {
-        this.adapterId = adapterId;
+    public void setAspspId(String aspspId) {
+        this.aspspId = aspspId;
     }
 
     @Override
@@ -79,12 +79,12 @@ public class TokenBO {
                        Objects.equals(expiresInSeconds, tokenBO.expiresInSeconds) &&
                        Objects.equals(refreshToken, tokenBO.refreshToken) &&
                        Objects.equals(scope, tokenBO.scope) &&
-                       Objects.equals(adapterId, tokenBO.adapterId);
+                       Objects.equals(aspspId, tokenBO.aspspId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, refreshToken, scope, adapterId);
+        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, refreshToken, scope, aspspId);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class TokenBO {
                        ", expiresInSeconds=" + expiresInSeconds +
                        ", refreshToken='" + refreshToken + '\'' +
                        ", scope='" + scope + '\'' +
-                       ", adapterId='" + adapterId + '\'' +
+                       ", aspspId='" + aspspId + '\'' +
                        '}';
     }
 }

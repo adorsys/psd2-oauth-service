@@ -12,7 +12,6 @@ import de.adorsys.xs2a.adapter.exception.RestException;
 import de.adorsys.xs2a.adapter.exception.NotFoundRestException;
 import de.adorsys.xs2a.adapter.service.exception.TokenNotFoundServiceException;
 
-import java.util.Random;
 import java.util.UUID;
 
 
@@ -53,7 +52,7 @@ public class TokenResource {
             token.setExpiresInSeconds(3600L);
             token.setRefreshToken("my.refresh.token");
             token.setScope("AIS PIS");
-            token.setAdapterId("adorsys-integ-adapter");
+            token.setAspspId("adorsys-integ-adapter");
             token.setTokenType("Bearer");
             tokenService.save(token);
             return converter.toTokenTO(token);

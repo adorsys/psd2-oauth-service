@@ -18,7 +18,7 @@ package de.adorsys.xs2a.adapter.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
-import de.adorsys.xs2a.adapter.converter.TokenTOConverter;
+import de.adorsys.xs2a.adapter.config.BankConfig;
 import de.adorsys.xs2a.adapter.model.StateTO;
 import de.adorsys.xs2a.adapter.rest.psd2.model.TokenResponseTO;
 import de.adorsys.xs2a.adapter.service.RequestHeaders;
@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -40,7 +41,7 @@ import java.util.Map;
 @Controller
 public class AuthorizationController {
 
-    static final String AUTHORIZATION_CODE_ENDPOINT = "/authorization-code";
+    static final String AUTHORIZATION_CODE_ENDPOINT = "/{bank}/authorization-code";
     static final String CODE_PARAMETER = "code";
     static final String STATE_PARAMETER = "state";
     static final String ERROR_PARAMETER = "error";
@@ -51,8 +52,8 @@ public class AuthorizationController {
     private String errorUrl;
     private ObjectMapper objectMapper;
     private TokenService tokenService;
-    private TokenTOConverter tokenTOConverter;
     private Oauth2Client oauth2Client;
+    private BankConfig bankConfig;
 
     @Value("${oauth.redirect.success-url}")
     void setSuccessUrl(String successUrl) {
@@ -62,6 +63,11 @@ public class AuthorizationController {
     @Value("${oauth.redirect.error-url}")
     void setErrorUrl(String errorUrl) {
         this.errorUrl = errorUrl;
+    }
+
+    @Autowired
+    public void setBankConfig(BankConfig bankConfig) {
+        this.bankConfig = bankConfig;
     }
 
     @Autowired
@@ -75,17 +81,13 @@ public class AuthorizationController {
     }
 
     @Autowired
-    void setTokenTOConverter(TokenTOConverter tokenTOConverter) {
-        this.tokenTOConverter = tokenTOConverter;
-    }
-
-    @Autowired
     public void setOauth2Client(Oauth2Client oauth2Client) {
         this.oauth2Client = oauth2Client;
     }
 
     @GetMapping(value = AUTHORIZATION_CODE_ENDPOINT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public RedirectView getAuthorizationCode(
+            @PathVariable("bank") String bank,
             @RequestParam(value = CODE_PARAMETER, required = false) String code,
             @RequestParam(STATE_PARAMETER) String state,
             @RequestParam(value = ERROR_PARAMETER, required = false) String error,
@@ -93,32 +95,52 @@ public class AuthorizationController {
             @RequestParam(value = ERROR_URI_PARAMETER, required = false) String errorUri
     ) throws IOException {
         String redirectUrl = errorUrl;
+
         if (error == null || error.isEmpty()) {
             redirectUrl = successUrl;
-            byte[] bytes = Base64.getDecoder().decode(state.getBytes());
-            StateTO stateTO = objectMapper.readValue(bytes, StateTO.class);
 
-            Map<String, String> headers = new HashMap<>();
-            headers.put(RequestHeaders.X_GTW_ASPSP_ID, stateTO.getAdapterId());
+            StateTO stateTO = decodeState(state);
 
-            Map<String, String> params = new HashMap<>();
-            params.put("grant_type", "authorization_code");
-            params.put("authorization_code", code);
-            //todo put redirect_uri as request parameter
-            params.put("redirect_uri", "");
-            //todo put client_id as request parameter
-            params.put("client_id", "");
+            TokenResponseTO token = oauth2Client.getToken(buildHeaders(stateTO), buildParams(bank, code));
 
-            TokenResponseTO token = oauth2Client.getToken(headers, params);
             tokenService.save(buildToken(token, stateTO));
         }
+
         return new RedirectView(redirectUrl);
+    }
+
+    private StateTO decodeState(String state) {
+        StateTO stateTO;
+        try {
+            byte[] bytes = Base64.getDecoder().decode(state.getBytes());
+            stateTO = objectMapper.readValue(bytes, StateTO.class);
+        } catch (IOException e) {
+//            todo: replace with custom exception
+            throw new IllegalStateException();
+        }
+        return stateTO;
+    }
+
+    private Map<String, String> buildParams(String bank, String code) {
+        Map<String, String> params = new HashMap<>();
+        params.put("grant_type", "authorization_code");
+        params.put("authorization_code", code);
+        params.put("redirect_uri", bankConfig.getRedirectUri(bank));
+        params.put("client_id", bankConfig.getClientId(bank));
+        return params;
+    }
+
+    private Map<String, String> buildHeaders(StateTO stateTO) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put(RequestHeaders.X_GTW_ASPSP_ID, stateTO.getAspspId());
+        headers.put(RequestHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        return headers;
     }
 
     private TokenBO buildToken(TokenResponseTO tokenResponse, StateTO state) {
         TokenBO tokenBO = new TokenBO();
         tokenBO.setId(state.getClientId());
-        tokenBO.setAdapterId(state.getAdapterId());
+        tokenBO.setAspspId(state.getAspspId());
         tokenBO.setTokenType(tokenResponse.getTokenType());
         tokenBO.setScope(tokenResponse.getScope());
         tokenBO.setAccessToken(tokenResponse.getAccessToken());
