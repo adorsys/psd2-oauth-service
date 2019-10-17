@@ -2,6 +2,7 @@ package de.adorsys.xs2a.adapter.controller;
 
 import de.adorsys.xs2a.adapter.exception.NotFoundRestException;
 import de.adorsys.xs2a.adapter.exception.RestException;
+import de.adorsys.xs2a.adapter.model.AccessTokenTo;
 import de.adorsys.xs2a.adapter.service.TokenService;
 import de.adorsys.xs2a.adapter.service.exception.TokenNotFoundServiceException;
 import de.adorsys.xs2a.adapter.service.model.TokenBO;
@@ -31,12 +32,12 @@ public class TokenController {
 
     @ApiOperation("Get token by id")
     @GetMapping(TOKEN_BY_ID_URI)
-    public String getById(@PathVariable UUID id) throws RestException {
+    public AccessTokenTo getById(@PathVariable UUID id) throws RestException {
         logger.info("Get token by id={}", id);
         try {
             TokenBO token = tokenService.findById(id.toString());
             //todo: implement refresh token functionality. issue #[XS2AAD-46]
-            return token.getAccessToken();
+            return new AccessTokenTo(token.getAccessToken());
         } catch (TokenNotFoundServiceException e) {
             logger.error(e.getMessage(), e);
             throw new NotFoundRestException(e.getMessage()).withDevMessage(e.getMessage());

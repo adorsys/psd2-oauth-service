@@ -2,7 +2,6 @@ package de.adorsys.xs2a.adapter.repository.model;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 public class TokenEntity implements Serializable {
     private String id;
@@ -11,7 +10,7 @@ public class TokenEntity implements Serializable {
     private Long expiresInSeconds;
     private String refreshToken;
     private String scope;
-    private String adapterId;
+    private String aspspId;
 
     public String getId() {
         return id;
@@ -61,12 +60,12 @@ public class TokenEntity implements Serializable {
         this.scope = scope;
     }
 
-    public String getAdapterId() {
-        return adapterId;
+    public String getAspspId() {
+        return aspspId;
     }
 
-    public void setAdapterId(String adapterId) {
-        this.adapterId = adapterId;
+    public void setAspspId(String aspspId) {
+        this.aspspId = aspspId;
     }
 
     @Override
@@ -80,12 +79,12 @@ public class TokenEntity implements Serializable {
                        Objects.equals(expiresInSeconds, that.expiresInSeconds) &&
                        Objects.equals(refreshToken, that.refreshToken) &&
                        Objects.equals(scope, that.scope) &&
-                       Objects.equals(adapterId, that.adapterId);
+                       Objects.equals(aspspId, that.aspspId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, refreshToken, scope, adapterId);
+        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, refreshToken, scope, aspspId);
     }
 
     @Override
@@ -97,7 +96,7 @@ public class TokenEntity implements Serializable {
                        ", expiresInSeconds=" + expiresInSeconds +
                        ", refreshToken='" + refreshToken + '\'' +
                        ", scope='" + scope + '\'' +
-                       ", adapterId='" + adapterId + '\'' +
+                       ", aspspId='" + aspspId + '\'' +
                        '}';
     }
 }

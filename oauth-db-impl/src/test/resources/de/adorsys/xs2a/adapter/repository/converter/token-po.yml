@@ -4,4 +4,4 @@ tokenType: Bearer
 expiresInSeconds: 3600
 refreshToken: some.refresh.token=
 scope: AIS PIS
-adapterId: adorsys-integ-adapter
+aspspId: aspspId-uuid

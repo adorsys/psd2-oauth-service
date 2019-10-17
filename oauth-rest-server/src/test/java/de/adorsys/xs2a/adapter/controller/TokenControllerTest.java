@@ -1,5 +1,6 @@
 package de.adorsys.xs2a.adapter.controller;
 
+import de.adorsys.xs2a.adapter.model.AccessTokenTo;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -36,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TokenResourceTest {
+public class TokenControllerTest {
     private static final String TOKEN_ID = "d766b4c7-a940-446d-9bd4-af70eacf9772";
     private static final UUID ID = UUID.fromString(TOKEN_ID);
 
@@ -71,10 +72,9 @@ public class TokenResourceTest {
     @Test
     public void getById() throws Exception {
         when(tokenService.findById(TOKEN_ID)).thenReturn(bo);
-        when(converter.toTokenTO(bo)).thenReturn(to);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                                                      .get("/tokens/{id}", TOKEN_ID)
+                                                      .get("/oauth2/tokens/{id}", TOKEN_ID)
                                                       .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         )
                                       .andDo(print())
@@ -83,12 +83,11 @@ public class TokenResourceTest {
                                       .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
-        TokenTO actual = deserialize(content, TokenTO.class);
+        AccessTokenTo actual = deserialize(content, AccessTokenTo.class);
 
-        assertThat(actual, is(to));
+        assertThat(actual.getToken(), is(to.getAccessToken()));
 
         verify(tokenService, times(1)).findById(TOKEN_ID);
-        verify(converter, times(1)).toTokenTO(bo);
     }
 
     @Test
@@ -96,7 +95,7 @@ public class TokenResourceTest {
         when(tokenService.findById(TOKEN_ID)).thenThrow(TokenNotFoundServiceException.class);
 
         mockMvc.perform(MockMvcRequestBuilders
-                                .get("/tokens/{id}", TOKEN_ID)
+                                .get("/oauth2/tokens/{id}", TOKEN_ID)
                                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
         )
                 .andDo(print())
