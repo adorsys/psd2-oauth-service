@@ -106,7 +106,7 @@ public class AuthorizationControllerTest {
     private StateTO buildState() {
         StateTO state = new StateTO();
         state.setAspspId("5861cb21-1aca-41bc-b652-f73be6f042dc");
-        state.setClientId("VALID_CLIENT_ID");
+        state.setClientId("b4e24074-5294-481d-8ef8-4b17b6a136c5");
         return state;
     }
 }

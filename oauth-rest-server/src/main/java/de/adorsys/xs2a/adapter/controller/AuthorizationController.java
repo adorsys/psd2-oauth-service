@@ -43,7 +43,7 @@ import java.util.Map;
 @Controller
 public class AuthorizationController {
 
-    static final String AUTHORIZATION_CODE_ENDPOINT = "/{bank}/authorization-code";
+    static final String AUTHORIZATION_CODE_ENDPOINT = "/oauth2/{bank}/authorization-code";
     static final String CODE_PARAMETER = "code";
     static final String STATE_PARAMETER = "state";
     static final String ERROR_PARAMETER = "error";
