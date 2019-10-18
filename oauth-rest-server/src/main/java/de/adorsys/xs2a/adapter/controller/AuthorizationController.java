@@ -25,6 +25,7 @@ import de.adorsys.xs2a.adapter.rest.psd2.model.TokenResponseTO;
 import de.adorsys.xs2a.adapter.service.RequestHeaders;
 import de.adorsys.xs2a.adapter.service.TokenService;
 import de.adorsys.xs2a.adapter.service.model.TokenBO;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +134,7 @@ public class AuthorizationController {
         try {
             token = oauth2Client.getToken(headers, params);
             logger.debug("Access token is {}", token);
-        } catch (Exception e) {
+        } catch (IOException | FeignException e) {
             throw new OAuthRestException("xs2a-adapter_error", e.getMessage());
         }
         return token;
