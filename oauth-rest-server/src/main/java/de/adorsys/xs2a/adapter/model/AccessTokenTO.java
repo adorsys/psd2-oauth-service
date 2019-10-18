@@ -16,14 +16,14 @@
 
 package de.adorsys.xs2a.adapter.model;
 
-public class AccessTokenTo {
+public class AccessTokenTO {
     private String token;
 
-    public AccessTokenTo(String token) {
+    public AccessTokenTO(String token) {
         this.token = token;
     }
 
-    public AccessTokenTo() {
+    public AccessTokenTO() {
     }
 
     public String getToken() {

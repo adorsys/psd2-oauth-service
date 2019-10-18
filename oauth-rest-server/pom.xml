@@ -13,6 +13,10 @@
     <artifactId>oauth-rest-server</artifactId>
     <name>oauth-rest-server</name>
 
+    <properties>
+        <xs2a-adapter-service-remote.version>0.0.4-SNAPSHOT</xs2a-adapter-service-remote.version>
+    </properties>
+
     <dependencies>
 
         <!-- project dependencies -->
@@ -26,7 +30,7 @@
         <dependency>
             <groupId>de.adorsys.xs2a.adapter</groupId>
             <artifactId>xs2a-adapter-service-remote</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>${xs2a-adapter-service-remote.version}</version>
         </dependency>
 
         <!-- spring dependencies -->
@@ -39,21 +43,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
         </dependency>
 
         <dependency>

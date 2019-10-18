@@ -1,6 +1,6 @@
 package de.adorsys.xs2a.adapter.controller;
 
-import de.adorsys.xs2a.adapter.model.AccessTokenTo;
+import de.adorsys.xs2a.adapter.model.AccessTokenTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -83,7 +83,7 @@ public class TokenControllerTest {
                                       .andReturn();
 
         String content = mvcResult.getResponse().getContentAsString();
-        AccessTokenTo actual = deserialize(content, AccessTokenTo.class);
+        AccessTokenTO actual = deserialize(content, AccessTokenTO.class);
 
         assertThat(actual.getToken(), is(to.getAccessToken()));
 

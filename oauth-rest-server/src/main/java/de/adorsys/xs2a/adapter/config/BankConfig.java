@@ -28,7 +28,7 @@ public class BankConfig {
 
     public static final String CLIENT_ID = "client-id";
     public static final String REDIRECT_URI = "redirect-uri";
-    Map<String, Map<String,String>> bankConfig;
+    Map<String, Map<String, String>> bankConfig;
 
     public Map<String, Map<String, String>> getBankConfig() {
         return bankConfig;
@@ -50,7 +50,7 @@ public class BankConfig {
 
     private void isBankSupported(String bank) throws OAuthRestException {
         if (!bankConfig.containsKey(bank)) {
-            throw new OAuthRestException("bank_not_supported",bank+" is not supported by psd2-oauth service");
+            throw new OAuthRestException("bank_not_supported", bank + " is not supported by psd2-oauth service");
         }
     }
 }
