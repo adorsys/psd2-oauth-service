@@ -14,35 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.xs2a.adapter.exception;
+package de.adorsys.xs2a.adapter.service.exception;
 
-public class OAuthRestException extends Exception {
-    private String code;
-    private String description;
-    private String uri;
+public class AuthCodeException extends Exception {
+    protected String code;
 
-    public OAuthRestException(String code, String description, String uri) {
-        super(code);
-        this.code = code;
-        this.description = description;
-        this.uri = uri;
-    }
-
-    public OAuthRestException(String code, String description) {
-        super(code);
-        this.code = code;
-        this.description = description;
+    public AuthCodeException(String message) {
+        super(message);
     }
 
     public String getCode() {
         return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getUri() {
-        return uri;
     }
 }

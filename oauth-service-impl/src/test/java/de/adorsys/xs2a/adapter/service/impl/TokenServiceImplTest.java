@@ -1,5 +1,7 @@
 package de.adorsys.xs2a.adapter.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
 import de.adorsys.xs2a.adapter.repository.TokenRepository;
 import de.adorsys.xs2a.adapter.repository.exception.TokenNotFoundDBException;
 import de.adorsys.xs2a.adapter.repository.model.TokenPO;
@@ -29,6 +31,13 @@ public class TokenServiceImplTest {
 
     @Mock
     private TokenBOConverter converter;
+
+    @Mock
+    private Oauth2Client oauth2Client;
+
+    @InjectMocks
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     private TokenPO po;
     private TokenBO bo;
 

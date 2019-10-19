@@ -19,7 +19,6 @@ package de.adorsys.xs2a.adapter.controller;
 import de.adorsys.xs2a.adapter.service.TokenService;
 import de.adorsys.xs2a.adapter.service.exception.TokenNotFoundServiceException;
 import de.adorsys.xs2a.adapter.service.model.TokenBO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,8 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class ViewController {
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
+
+    public ViewController(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
 
     @GetMapping("/success")
     public String successPage(

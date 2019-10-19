@@ -13,6 +13,10 @@
     <artifactId>oauth-service-impl</artifactId>
     <name>oauth-service-impl</name>
 
+    <properties>
+        <xs2a-adapter-service-remote.version>0.0.4-SNAPSHOT</xs2a-adapter-service-remote.version>
+    </properties>
+
     <dependencies>
 
         <!-- project dependencies -->
@@ -27,6 +31,13 @@
             <groupId>de.adorsys.xs2a.adapter</groupId>
             <artifactId>oauth-db-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <artifactId>xs2a-adapter-service-remote</artifactId>
+            <version>${xs2a-adapter-service-remote.version}</version>
         </dependency>
 
         <!-- spring dependencies -->

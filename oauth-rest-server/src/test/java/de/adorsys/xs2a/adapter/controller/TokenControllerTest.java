@@ -1,13 +1,17 @@
 package de.adorsys.xs2a.adapter.controller;
 
+import de.adorsys.xs2a.adapter.converter.TokenTOConverter;
+import de.adorsys.xs2a.adapter.exception.ExceptionAdvisor;
 import de.adorsys.xs2a.adapter.model.AccessTokenTO;
+import de.adorsys.xs2a.adapter.model.TokenTO;
+import de.adorsys.xs2a.adapter.service.TokenService;
+import de.adorsys.xs2a.adapter.service.exception.TokenNotFoundServiceException;
+import de.adorsys.xs2a.adapter.service.model.TokenBO;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -17,26 +21,17 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pro.javatar.commons.reader.JsonReader;
 import pro.javatar.commons.reader.YamlReader;
-import de.adorsys.xs2a.adapter.converter.TokenTOConverter;
-import de.adorsys.xs2a.adapter.model.TokenTO;
-import de.adorsys.xs2a.adapter.exception.ExceptionAdvisor;
-import de.adorsys.xs2a.adapter.service.TokenService;
-import de.adorsys.xs2a.adapter.service.model.TokenBO;
-import de.adorsys.xs2a.adapter.service.exception.TokenNotFoundServiceException;
 
 import java.io.IOException;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 public class TokenControllerTest {
     private static final String TOKEN_ID = "d766b4c7-a940-446d-9bd4-af70eacf9772";
     private static final UUID ID = UUID.fromString(TOKEN_ID);
@@ -49,8 +44,6 @@ public class TokenControllerTest {
     @Mock
     private TokenService tokenService;
 
-    @Mock
-    private TokenTOConverter converter;
     private TokenBO bo;
     private TokenTO to;
 

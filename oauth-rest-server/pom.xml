@@ -14,7 +14,7 @@
     <name>oauth-rest-server</name>
 
     <properties>
-        <xs2a-adapter-service-remote.version>0.0.4-SNAPSHOT</xs2a-adapter-service-remote.version>
+        <spring-webmvc.version>5.1.10.RELEASE</spring-webmvc.version>
     </properties>
 
     <dependencies>
@@ -27,17 +27,12 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
-            <artifactId>xs2a-adapter-service-remote</artifactId>
-            <version>${xs2a-adapter-service-remote.version}</version>
-        </dependency>
-
         <!-- spring dependencies -->
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <version>${spring-webmvc.version}</version>
         </dependency>
 
         <dependency>
@@ -96,18 +91,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>5.1.10.RELEASE</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
