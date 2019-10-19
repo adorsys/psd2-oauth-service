@@ -41,6 +41,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public TokenBO exchangeAuthCode(String code, String redirectUri, String clientId, String state) throws ExchangeAuthCodeException {
+        logger.info("Exchange auth code by token");
         logger.debug("code={}, redirect_uri={}, client_id={}", code, redirectUri, clientId);
         State stateObj = decodeState(state);
 
@@ -50,11 +51,12 @@ public class TokenServiceImpl implements TokenService {
         TokenResponseTO token;
         try {
             token = oauth2Client.getToken(headers, params);
-            logger.debug("Access token is {}", token);
         } catch (IOException | FeignException e) {
             throw new ExchangeAuthCodeException("xs2a-adapter_error", e.getMessage());
         }
-        return converter.toTokenBO(token, stateObj.clientId, stateObj.aspspId);
+        TokenBO tokenBO = converter.toTokenBO(token, stateObj.clientId, stateObj.aspspId);
+        logger.debug("Access token is {}", tokenBO);
+        return tokenBO;
     }
 
     private Map<String, String> buildParams(String code, String redirectUri, String clientId) {
@@ -133,6 +135,14 @@ public class TokenServiceImpl implements TokenService {
 
         public void setAspspId(String aspspId) {
             this.aspspId = aspspId;
+        }
+
+        @Override
+        public String toString() {
+            return "State{" +
+                           "clientId='" + clientId + '\'' +
+                           ", aspspId='" + aspspId + '\'' +
+                           '}';
         }
     }
 }

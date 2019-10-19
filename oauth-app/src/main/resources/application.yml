@@ -74,3 +74,7 @@ oauth:
     ing:
       clientId:
       redirectUri: https://client.example.com/cb
+
+logging:
+  level:
+    de.adorsys: DEBUG
