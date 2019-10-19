@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.adorsys.xs2a.adapter</groupId>
+    <groupId>de.adorsys.psd2.oauth</groupId>
     <artifactId>oauth-service</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>

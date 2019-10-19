@@ -8,7 +8,7 @@
     </properties>
 
     <parent>
-        <groupId>de.adorsys.xs2a.adapter</groupId>
+        <groupId>de.adorsys.psd2.oauth</groupId>
         <artifactId>oauth-service</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
@@ -22,7 +22,7 @@
         <!-- project dependencies -->
 
         <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <groupId>de.adorsys.psd2.oauth</groupId>
             <artifactId>oauth-db-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -72,10 +72,10 @@
                                 <bannedDependencies>
                                     <excludes>
                                         <!-- project dependencies -->
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-service-api</exclude>
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-service-impl</exclude>
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-app</exclude>
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-rest-server</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-service-api</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-service-impl</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-app</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-rest-server</exclude>
                                         <!-- 3rd party dependencies -->
                                         <exclude>joda-time:*</exclude>
                                         <exclude>org.projectlombok:lombok</exclude>
