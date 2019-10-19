@@ -1,7 +1,0 @@
-id: d766b4c7-a940-446d-9bd4-af70eacf9772
-accessToken: some.access.token
-tokenType: Bearer
-expiresInSeconds: 3600
-refreshToken: some.refresh.token
-scope: AIS PIS
-aspspId: aspspId-uuid

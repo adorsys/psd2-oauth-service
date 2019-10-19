@@ -1,9 +1,7 @@
 package de.adorsys.xs2a.adapter.controller;
 
-import de.adorsys.xs2a.adapter.converter.TokenTOConverter;
 import de.adorsys.xs2a.adapter.exception.ExceptionAdvisor;
 import de.adorsys.xs2a.adapter.model.AccessTokenTO;
-import de.adorsys.xs2a.adapter.model.TokenTO;
 import de.adorsys.xs2a.adapter.service.TokenService;
 import de.adorsys.xs2a.adapter.service.exception.TokenNotFoundServiceException;
 import de.adorsys.xs2a.adapter.service.model.TokenBO;
@@ -20,10 +18,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pro.javatar.commons.reader.JsonReader;
-import pro.javatar.commons.reader.YamlReader;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -34,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TokenControllerTest {
     private static final String TOKEN_ID = "d766b4c7-a940-446d-9bd4-af70eacf9772";
-    private static final UUID ID = UUID.fromString(TOKEN_ID);
 
     private MockMvc mockMvc;
 
@@ -43,10 +38,6 @@ public class TokenControllerTest {
 
     @Mock
     private TokenService tokenService;
-
-    private TokenBO bo;
-    private TokenTO to;
-
 
     @Before
     public void setUp() {
@@ -58,13 +49,14 @@ public class TokenControllerTest {
                           .setMessageConverters(new MappingJackson2HttpMessageConverter())
                           .build();
 
-        bo = readYml(TokenBO.class, "token-bo.yml");
-        to = readYml(TokenTO.class, "token-to.yml");
     }
 
     @Test
     public void getById() throws Exception {
-        when(tokenService.findById(TOKEN_ID)).thenReturn(bo);
+        TokenBO token = new TokenBO();
+        token.setAccessToken("access-token");
+
+        when(tokenService.findById(TOKEN_ID)).thenReturn(token);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                                                       .get("/oauth2/tokens/{id}", TOKEN_ID)
@@ -78,7 +70,7 @@ public class TokenControllerTest {
         String content = mvcResult.getResponse().getContentAsString();
         AccessTokenTO actual = deserialize(content, AccessTokenTO.class);
 
-        assertThat(actual.getToken(), is(to.getAccessToken()));
+        assertThat(actual.getToken(), is(token.getAccessToken()));
 
         verify(tokenService, times(1)).findById(TOKEN_ID);
     }
@@ -99,14 +91,6 @@ public class TokenControllerTest {
         verify(tokenService, times(1)).findById(TOKEN_ID);
     }
 
-    private <T> T readYml(Class<T> aClass, String fileName) {
-        try {
-            return YamlReader.getInstance().getObjectFromResource(TokenTOConverter.class, fileName, aClass);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     private <T> T deserialize(String source, Class<T> tClass) {
         try {
