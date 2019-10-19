@@ -3,6 +3,7 @@ package de.adorsys.xs2a.adapter.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.xs2a.adapter.config.BankConfig;
+import de.adorsys.xs2a.adapter.config.BankSettings;
 import de.adorsys.xs2a.adapter.model.StateTO;
 import de.adorsys.xs2a.adapter.service.TokenService;
 import de.adorsys.xs2a.adapter.service.model.TokenBO;
@@ -52,11 +53,9 @@ public class AuthorizationControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-        HashMap<String, Map<String, String>> config = new HashMap<>();
-        HashMap<String, String> adorsysConfig = new HashMap<>();
-        adorsysConfig.put(BankConfig.CLIENT_ID, CLIENT_ID);
-        adorsysConfig.put(BankConfig.REDIRECT_URI, REDIRECT_URI);
-        config.put(BANK_NAME, adorsysConfig);
+        Map<String, BankSettings> config = new HashMap<>();
+        BankSettings bankProperty = new BankSettings(CLIENT_ID, REDIRECT_URI);
+        config.put(BANK_NAME, bankProperty);
         bankConfig.setBankConfig(config);
     }
 

@@ -26,26 +26,24 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "oauth")
 public class BankConfig {
 
-    public static final String CLIENT_ID = "client-id";
-    public static final String REDIRECT_URI = "redirect-uri";
-    Map<String, Map<String, String>> bankConfig;
+    Map<String, BankSettings> bankConfig;
 
-    public Map<String, Map<String, String>> getBankConfig() {
+    public Map<String, BankSettings> getBankConfig() {
         return bankConfig;
     }
 
-    public void setBankConfig(Map<String, Map<String, String>> bankConfig) {
+    public void setBankConfig(Map<String, BankSettings> bankConfig) {
         this.bankConfig = bankConfig;
     }
 
     public String getClientId(String bank) throws BankNotSupportedException {
         checkBankSupported(bank);
-        return bankConfig.get(bank).get(CLIENT_ID);
+        return bankConfig.get(bank).getClientId();
     }
 
     public String getRedirectUri(String bank) throws BankNotSupportedException {
         checkBankSupported(bank);
-        return bankConfig.get(bank).get(REDIRECT_URI);
+        return bankConfig.get(bank).getRedirectUri();
     }
 
     private void checkBankSupported(String bank) throws BankNotSupportedException {

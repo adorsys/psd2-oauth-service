@@ -63,14 +63,14 @@ oauth:
     error-url: /error
   bank-config:
     adorsys:
-      client-id: ADORSYS_CLIENT_ID
-      redirect-uri: https://adorsys.de
+      clientId: ADORSYS_CLIENT_ID
+      redirectUri: https://adorsys.de
     commerzbank:
-      client-id: VALID_CLIENT_ID
-      redirect-uri: https://client.example.com/cb
+      clientId: VALID_CLIENT_ID
+      redirectUri: https://client.example.com/cb
     comdirect:
-      client-id: VALID_CLIENT_ID
-      redirect-uri: https://client.example.com/cb
+      clientId: VALID_CLIENT_ID
+      redirectUri: https://client.example.com/cb
     ing:
-      client-id:
-      redirect-uri: https://client.example.com/cb
+      clientId:
+      redirectUri: https://client.example.com/cb
