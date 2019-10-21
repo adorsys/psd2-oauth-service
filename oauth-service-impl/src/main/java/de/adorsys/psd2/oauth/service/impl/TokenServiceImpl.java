@@ -1,11 +1,11 @@
 package de.adorsys.psd2.oauth.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
 import de.adorsys.psd2.oauth.repository.TokenRepository;
 import de.adorsys.psd2.oauth.repository.exception.TokenNotFoundDBException;
 import de.adorsys.psd2.oauth.repository.model.TokenPO;
-import de.adorsys.xs2a.adapter.rest.psd2.model.TokenResponseTO;
+import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
+import de.adorsys.xs2a.adapter.api.TokenResponseTO;
 import de.adorsys.xs2a.adapter.service.RequestHeaders;
 import de.adorsys.psd2.oauth.service.TokenService;
 import de.adorsys.psd2.oauth.service.converter.TokenBOConverter;
@@ -98,7 +98,6 @@ public class TokenServiceImpl implements TokenService {
             TokenPO tokenPO = repository.findById(id);
             return converter.toTokenBO(tokenPO);
         } catch (TokenNotFoundDBException e) {
-            logger.error(e.getMessage(), e);
             throw new TokenNotFoundServiceException(e.getMessage());
         }
     }

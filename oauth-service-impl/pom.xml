@@ -14,7 +14,7 @@
     <name>oauth-service-impl</name>
 
     <properties>
-        <xs2a-adapter-service-remote.version>0.0.4-SNAPSHOT</xs2a-adapter-service-remote.version>
+        <xs2a-adapter-service-remote.version>0.0.4</xs2a-adapter-service-remote.version>
     </properties>
 
     <dependencies>
@@ -34,13 +34,26 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
-            <artifactId>xs2a-adapter-service-remote</artifactId>
-            <version>${xs2a-adapter-service-remote.version}</version>
-        </dependency>
+        <!--        uncomment when adapter v0.0.4 would be released -->
+        <!--        <dependency>-->
+        <!--            <groupId>de.adorsys.xs2a.adapter</groupId>-->
+        <!--            <artifactId>xs2a-adapter-service-remote</artifactId>-->
+        <!--            <version>${xs2a-adapter-service-remote.version}</version>-->
+        <!--        </dependency>-->
 
         <!-- spring dependencies -->
+
+        <!--        remove it when v0.0.4 would be released-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+        </dependency>
+
+        <!--        remove it when v0.0.4 would be released-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -48,6 +61,24 @@
         </dependency>
 
         <!-- other -->
+
+        <!--        remove it when v0.0.4 would be released-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
+        <!--        remove it when v0.0.4 would be released-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!--        remove it when v0.0.4 would be released-->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-core</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

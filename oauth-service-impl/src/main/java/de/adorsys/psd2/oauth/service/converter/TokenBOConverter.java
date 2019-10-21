@@ -1,6 +1,6 @@
 package de.adorsys.psd2.oauth.service.converter;
 
-import de.adorsys.xs2a.adapter.rest.psd2.model.TokenResponseTO;
+import de.adorsys.xs2a.adapter.api.TokenResponseTO;
 import org.mapstruct.Mapper;
 import de.adorsys.psd2.oauth.repository.model.TokenPO;
 import de.adorsys.psd2.oauth.service.model.TokenBO;
