@@ -48,7 +48,7 @@ public class AuthorizationController {
             BankConfig bankConfig,
             @Value("${oauth.redirect.success-url}") String successUrl,
             @Value("${oauth.redirect.error-url}") String errorUrl,
-            @Value("${oauth.server.host}") String serverUrl) {
+            @Value("${oauth.server.url}") String serverUrl) {
         this.tokenService = tokenService;
         this.bankConfig = bankConfig;
         this.successUrl = successUrl;
