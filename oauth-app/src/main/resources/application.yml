@@ -20,6 +20,8 @@ server:
 oauth:
   server:
     host:
+  get-token-endpoint:
+    enabled: false
   redirect:
     success-url:
     error-url:
@@ -56,7 +58,9 @@ xs2a-adapter:
 
 oauth:
   server:
-    host:
+    host: http://localhost:8082
+  get-token-endpoint:
+    enabled: true
   redirect:
     success-url: /success
     error-url: /error

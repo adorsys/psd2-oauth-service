@@ -24,8 +24,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.servlet.http.HttpServletResponse;
-
 @Profile("dev")
 @Controller
 public class ViewController {
@@ -37,13 +35,10 @@ public class ViewController {
     }
 
     @GetMapping("/success")
-    public String successPage(
-            Model model,
-            HttpServletResponse response
-    ) throws TokenNotFoundServiceException {
+    public String successPage(Model model) throws TokenNotFoundServiceException {
         String clientId = (String) model.asMap().get("clientId");
         TokenBO token = tokenService.findById(clientId);
-        response.addHeader("Authorization", "Bearer " + token.getAccessToken());
+        model.addAttribute("token", token.getAccessToken());
         return "success";
     }
 
