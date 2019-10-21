@@ -2,6 +2,8 @@ spring:
   application.name: oauth-service
   main:
     allow-bean-definition-overriding: true
+  jackson:
+    default-property-inclusion: non_null
 
 info:
   app:
@@ -13,6 +15,37 @@ info:
 server:
   # Authorization HTTP header requires to enlarge max header size.
   max-http-header-size: 65000
+  port: 8082
+
+oauth:
+  redirect:
+    success-url:
+    error-url:
+  bank-config:
+    adorsys:
+      client-id:
+      redirect-uri:
+    commerzbank:
+      client-id:
+      redirect-uri:
+    comdirect:
+      client-id:
+      redirect-uri:
+    ing:
+      client-id:
+      redirect-uri:
+
+
+xs2a-adapter:
+  url:
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 15000
+        readTimeout: 15000
+        loggerLevel: full
 
 ---
 spring:
@@ -20,3 +53,28 @@ spring:
   redis:
     host: localhost
     port: 6379
+
+xs2a-adapter:
+  url: http://localhost:8999
+
+oauth:
+  redirect:
+    success-url: /success
+    error-url: /error
+  bank-config:
+    adorsys:
+      clientId: ADORSYS_CLIENT_ID
+      redirectUri: https://adorsys.de
+    commerzbank:
+      clientId: VALID_CLIENT_ID
+      redirectUri: https://client.example.com/cb
+    comdirect:
+      clientId: VALID_CLIENT_ID
+      redirectUri: https://client.example.com/cb
+    ing:
+      clientId:
+      redirectUri: https://client.example.com/cb
+
+logging:
+  level:
+    de.adorsys: DEBUG

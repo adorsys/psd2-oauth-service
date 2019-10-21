@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>de.adorsys.xs2a.adapter</groupId>
+        <groupId>de.adorsys.psd2.oauth</groupId>
         <artifactId>oauth-service</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
@@ -13,12 +13,16 @@
     <artifactId>oauth-rest-server</artifactId>
     <name>oauth-rest-server</name>
 
+    <properties>
+        <spring-webmvc.version>5.1.10.RELEASE</spring-webmvc.version>
+    </properties>
+
     <dependencies>
 
         <!-- project dependencies -->
 
         <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <groupId>de.adorsys.psd2.oauth</groupId>
             <artifactId>oauth-service-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -27,22 +31,13 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring-webmvc.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
         <dependency>
@@ -70,6 +65,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- jackson  -->
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- other dependencies -->
 
         <dependency>
@@ -88,12 +90,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -116,10 +112,10 @@
                                 <bannedDependencies>
                                     <excludes>
                                         <!-- project dependencies -->
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-service-impl</exclude>
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-db-api</exclude>
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-db-impl</exclude>
-                                        <exclude>de.adorsys.xs2a.adapter:oauth-app</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-service-impl</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-db-api</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-db-impl</exclude>
+                                        <exclude>de.adorsys.psd2.oauth:oauth-app</exclude>
                                         <!-- 3rd party dependencies -->
                                         <exclude>joda-time:*</exclude>
                                         <exclude>org.projectlombok:lombok</exclude>

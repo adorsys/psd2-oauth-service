@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>de.adorsys.xs2a.adapter</groupId>
+        <groupId>de.adorsys.psd2.oauth</groupId>
         <artifactId>oauth-service</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
@@ -19,36 +19,46 @@
         <!-- project dependencies -->
 
         <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <groupId>de.adorsys.psd2.oauth</groupId>
             <artifactId>oauth-rest-server</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <groupId>de.adorsys.psd2.oauth</groupId>
             <artifactId>oauth-db-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <groupId>de.adorsys.psd2.oauth</groupId>
             <artifactId>oauth-db-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <groupId>de.adorsys.psd2.oauth</groupId>
             <artifactId>oauth-service-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.xs2a.adapter</groupId>
+            <groupId>de.adorsys.psd2.oauth</groupId>
             <artifactId>oauth-service-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- spring dependencies -->
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -58,17 +68,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
             <scope>runtime</scope>
         </dependency>
 
