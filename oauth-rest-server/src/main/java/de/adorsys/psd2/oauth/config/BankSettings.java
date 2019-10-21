@@ -18,14 +18,12 @@ package de.adorsys.psd2.oauth.config;
 
 public class BankSettings {
     String clientId;
-    String redirectUri;
 
     public BankSettings() {
     }
 
-    public BankSettings(String clientId, String redirectUri) {
+    public BankSettings(String clientId) {
         this.clientId = clientId;
-        this.redirectUri = redirectUri;
     }
 
     public String getClientId() {
@@ -34,13 +32,5 @@ public class BankSettings {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
-    }
-
-    public String getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(String redirectUri) {
-        this.redirectUri = redirectUri;
     }
 }

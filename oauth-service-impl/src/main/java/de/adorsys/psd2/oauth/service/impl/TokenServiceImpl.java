@@ -42,7 +42,6 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public TokenBO exchangeAuthCode(String code, String redirectUri, String clientId, String state) throws ExchangeAuthCodeException {
         logger.info("Exchange auth code by token");
-        logger.debug("code={}, redirect_uri={}, client_id={}", code, redirectUri, clientId);
         State stateObj = decodeState(state);
 
         Map<String, String> headers = buildHeaders(stateObj);
@@ -54,9 +53,7 @@ public class TokenServiceImpl implements TokenService {
         } catch (IOException | FeignException e) {
             throw new ExchangeAuthCodeException("xs2a-adapter_error", e.getMessage());
         }
-        TokenBO tokenBO = converter.toTokenBO(token, stateObj.clientId, stateObj.aspspId);
-        logger.debug("Access token is {}", tokenBO);
-        return tokenBO;
+        return converter.toTokenBO(token, stateObj.clientId, stateObj.aspspId);
     }
 
     private Map<String, String> buildParams(String code, String redirectUri, String clientId) {
@@ -65,7 +62,6 @@ public class TokenServiceImpl implements TokenService {
         params.put("code", code);
         params.put("redirect_uri", redirectUri);
         params.put("client_id", clientId);
-        logger.debug("Parameters are {}", params);
         return params;
     }
 
@@ -73,18 +69,15 @@ public class TokenServiceImpl implements TokenService {
         Map<String, String> headers = new HashMap<>();
         headers.put(RequestHeaders.X_GTW_ASPSP_ID, state.getAspspId());
         headers.put(RequestHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        logger.debug("Headers are {}", headers);
         return headers;
     }
 
 
     private State decodeState(String state) throws ExchangeAuthCodeException {
-        logger.debug("Try to decode state={}", state);
         State stateObj;
         try {
             byte[] bytes = Base64.getDecoder().decode(state.getBytes());
             stateObj = objectMapper.readValue(bytes, State.class);
-            logger.debug("Decoded state is {}", stateObj);
         } catch (IOException e) {
             throw new ExchangeAuthCodeException("corrupted_state", "Could not decode state. Seems it was corrupted");
         }
@@ -104,7 +97,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public TokenBO save(TokenBO token) {
-        logger.info("Trying to save token {}", token);
+        logger.info("Trying to save token with id={}", token.getId());
         TokenPO po = converter.toTokenPO(token);
         TokenPO saved = repository.save(po);
         return converter.toTokenBO(saved);

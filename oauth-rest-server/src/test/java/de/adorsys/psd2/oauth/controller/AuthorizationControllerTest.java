@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.oauth.config.BankConfig;
 import de.adorsys.psd2.oauth.config.BankSettings;
+import de.adorsys.psd2.oauth.exception.BankNotSupportedException;
 import de.adorsys.psd2.oauth.model.StateTO;
 import de.adorsys.psd2.oauth.service.TokenService;
 import de.adorsys.psd2.oauth.service.model.TokenBO;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static de.adorsys.psd2.oauth.controller.AuthorizationController.AUTHORIZATION_CODE_ENDPOINT;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -31,9 +33,10 @@ public class AuthorizationControllerTest {
 
     private static final String BANK_NAME = "adorsys";
     private static final String CLIENT_ID = "client-id";
-    private static final String REDIRECT_URI = "redirect-uri";
     private static final String CODE_PARAMETER = "code";
     private static final String STATE_PARAMETER = "state";
+    private static final String SERVER_HOST = "http://localhost:8080";
+    private static final String REDIRECT_URI = SERVER_HOST + AUTHORIZATION_CODE_ENDPOINT.replace("{bank}", BANK_NAME);
 
     private MockMvc mockMvc;
 
@@ -54,9 +57,11 @@ public class AuthorizationControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
         Map<String, BankSettings> config = new HashMap<>();
-        BankSettings bankProperty = new BankSettings(CLIENT_ID, REDIRECT_URI);
+        BankSettings bankProperty = new BankSettings(CLIENT_ID);
         config.put(BANK_NAME, bankProperty);
         bankConfig.setBankConfig(config);
+
+        controller.setServerHost(SERVER_HOST);
     }
 
     @Test
@@ -96,6 +101,13 @@ public class AuthorizationControllerTest {
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(errorUrl));
+    }
+
+    @Test
+    public void buildRedirectUri() throws BankNotSupportedException {
+        String redirectUri = controller.buildRedirectUri(BANK_NAME);
+
+        assertThat(redirectUri).isEqualTo(REDIRECT_URI);
     }
 
     private String encodeState(StateTO state) throws JsonProcessingException {

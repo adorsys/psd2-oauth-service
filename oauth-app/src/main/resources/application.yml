@@ -18,23 +18,20 @@ server:
   port: 8082
 
 oauth:
+  server:
+    host:
   redirect:
     success-url:
     error-url:
   bank-config:
     adorsys:
-      client-id:
-      redirect-uri:
+      clientId:
     commerzbank:
-      client-id:
-      redirect-uri:
+      clientId:
     comdirect:
-      client-id:
-      redirect-uri:
+      clientId:
     ing:
-      client-id:
-      redirect-uri:
-
+      clientId:
 
 xs2a-adapter:
   url:
@@ -58,22 +55,20 @@ xs2a-adapter:
   url: http://localhost:8999
 
 oauth:
+  server:
+    host:
   redirect:
     success-url: /success
     error-url: /error
   bank-config:
     adorsys:
       clientId: ADORSYS_CLIENT_ID
-      redirectUri: https://adorsys.de
     commerzbank:
       clientId: VALID_CLIENT_ID
-      redirectUri: https://client.example.com/cb
     comdirect:
       clientId: VALID_CLIENT_ID
-      redirectUri: https://client.example.com/cb
     ing:
       clientId:
-      redirectUri: https://client.example.com/cb
 
 logging:
   level:
