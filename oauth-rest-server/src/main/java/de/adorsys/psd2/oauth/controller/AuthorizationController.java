@@ -39,7 +39,7 @@ public class AuthorizationController {
 
     private String successUrl;
     private String errorUrl;
-    private String serverHost;
+    private String serverUrl;
     private final TokenService tokenService;
     private final BankConfig bankConfig;
 
@@ -48,12 +48,12 @@ public class AuthorizationController {
             BankConfig bankConfig,
             @Value("${oauth.redirect.success-url}") String successUrl,
             @Value("${oauth.redirect.error-url}") String errorUrl,
-            @Value("${oauth.server.host}") String serverHost) {
+            @Value("${oauth.server.host}") String serverUrl) {
         this.tokenService = tokenService;
         this.bankConfig = bankConfig;
         this.successUrl = successUrl;
         this.errorUrl = errorUrl;
-        this.serverHost = serverHost;
+        this.serverUrl = serverUrl;
     }
 
     @GetMapping(value = AUTHORIZATION_CODE_ENDPOINT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -85,7 +85,7 @@ public class AuthorizationController {
     }
 
     String buildRedirectUri(String bank) throws BankNotSupportedException {
-        String redirectUri = serverHost.endsWith("/") ? serverHost.substring(0, serverHost.length() - 1) : serverHost;
+        String redirectUri = serverUrl.endsWith("/") ? serverUrl.substring(0, serverUrl.length() - 1) : serverUrl;
         return redirectUri + AUTHORIZATION_CODE_ENDPOINT.replace("{bank}", bank);
     }
 
@@ -141,7 +141,7 @@ public class AuthorizationController {
         this.errorUrl = errorUrl;
     }
 
-    void setServerHost(String serverHost) {
-        this.serverHost = serverHost;
+    void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 }

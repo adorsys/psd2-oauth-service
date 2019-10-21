@@ -58,7 +58,7 @@ xs2a-adapter:
 
 oauth:
   server:
-    host: http://localhost:8082
+    url: http://localhost:8082
   get-token-endpoint:
     enabled: true
   redirect:

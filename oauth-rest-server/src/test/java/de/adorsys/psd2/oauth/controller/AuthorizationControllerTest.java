@@ -61,7 +61,7 @@ public class AuthorizationControllerTest {
         config.put(BANK_NAME, bankProperty);
         bankConfig.setBankConfig(config);
 
-        controller.setServerHost(SERVER_HOST);
+        controller.setServerUrl(SERVER_HOST);
     }
 
     @Test
