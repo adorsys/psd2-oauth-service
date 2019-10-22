@@ -66,8 +66,8 @@ public class AuthorizationController {
         if (errReq.error == null || errReq.error.isEmpty()) {
             TokenBO token;
             try {
-                String redirectUri = buildRedirectUri(bank);
                 String clientId = bankConfig.getClientId(bank);
+                String redirectUri = buildRedirectUri(bank);
                 token = tokenService.exchangeAuthCode(authCode.code, redirectUri, clientId, authCode.state);
                 tokenService.save(token);
             } catch (AuthCodeException e) {
@@ -84,7 +84,7 @@ public class AuthorizationController {
         return redirectToErrorPage(errReq.error, errReq.error_description, errReq.error_uri, redirectAttributes);
     }
 
-    String buildRedirectUri(String bank) throws BankNotSupportedException {
+    String buildRedirectUri(String bank) {
         String redirectUri = serverUrl.endsWith("/") ? serverUrl.substring(0, serverUrl.length() - 1) : serverUrl;
         return redirectUri + AUTHORIZATION_CODE_ENDPOINT.replace("{bank}", bank);
     }

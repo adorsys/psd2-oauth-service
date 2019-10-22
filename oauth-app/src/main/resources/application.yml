@@ -19,7 +19,7 @@ server:
 
 oauth:
   server:
-    host:
+    url:
   get-token-endpoint:
     enabled: false
   redirect:
