@@ -41,14 +41,13 @@ public class BankConfig {
         return bankConfig.get(bank).getClientId();
     }
 
-    public String getRedirectUri(String bank) throws BankNotSupportedException {
-        checkBankSupported(bank);
-        return bankConfig.get(bank).getRedirectUri();
-    }
-
     private void checkBankSupported(String bank) throws BankNotSupportedException {
-        if (!bankConfig.containsKey(bank)) {
+        if (!isBankSupported(bank)) {
             throw new BankNotSupportedException(bank + " is not supported by psd2-oauth service", "bank_not_supported");
         }
+    }
+
+    public boolean isBankSupported(String bank) {
+        return bankConfig.containsKey(bank);
     }
 }

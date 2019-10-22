@@ -17,6 +17,7 @@
 package de.adorsys.psd2.oauth.controller;
 
 import de.adorsys.psd2.oauth.config.BankConfig;
+import de.adorsys.psd2.oauth.exception.BankNotSupportedException;
 import de.adorsys.psd2.oauth.service.TokenService;
 import de.adorsys.psd2.oauth.service.exception.AuthCodeException;
 import de.adorsys.psd2.oauth.service.model.TokenBO;
@@ -38,6 +39,7 @@ public class AuthorizationController {
 
     private String successUrl;
     private String errorUrl;
+    private String serverUrl;
     private final TokenService tokenService;
     private final BankConfig bankConfig;
 
@@ -45,11 +47,13 @@ public class AuthorizationController {
             TokenService tokenService,
             BankConfig bankConfig,
             @Value("${oauth.redirect.success-url}") String successUrl,
-            @Value("${oauth.redirect.error-url}") String errorUrl) {
+            @Value("${oauth.redirect.error-url}") String errorUrl,
+            @Value("${oauth.server.url}") String serverUrl) {
         this.tokenService = tokenService;
         this.bankConfig = bankConfig;
         this.successUrl = successUrl;
         this.errorUrl = errorUrl;
+        this.serverUrl = serverUrl;
     }
 
     @GetMapping(value = AUTHORIZATION_CODE_ENDPOINT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -62,8 +66,8 @@ public class AuthorizationController {
         if (errReq.error == null || errReq.error.isEmpty()) {
             TokenBO token;
             try {
-                String redirectUri = bankConfig.getRedirectUri(bank);
                 String clientId = bankConfig.getClientId(bank);
+                String redirectUri = buildRedirectUri(bank);
                 token = tokenService.exchangeAuthCode(authCode.code, redirectUri, clientId, authCode.state);
                 tokenService.save(token);
             } catch (AuthCodeException e) {
@@ -78,6 +82,11 @@ public class AuthorizationController {
         }
 
         return redirectToErrorPage(errReq.error, errReq.error_description, errReq.error_uri, redirectAttributes);
+    }
+
+    String buildRedirectUri(String bank) {
+        String redirectUri = serverUrl.endsWith("/") ? serverUrl.substring(0, serverUrl.length() - 1) : serverUrl;
+        return redirectUri + AUTHORIZATION_CODE_ENDPOINT.replace("{bank}", bank);
     }
 
     private RedirectView redirectToErrorPage(AuthCodeException e, RedirectAttributes redirectAttributes) {
@@ -130,5 +139,9 @@ public class AuthorizationController {
 
     void setErrorUrl(String errorUrl) {
         this.errorUrl = errorUrl;
+    }
+
+    void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 }
