@@ -17,7 +17,6 @@
 package de.adorsys.psd2.oauth.controller;
 
 import de.adorsys.psd2.oauth.config.BankConfig;
-import de.adorsys.psd2.oauth.exception.BankNotSupportedException;
 import de.adorsys.psd2.oauth.service.TokenService;
 import de.adorsys.psd2.oauth.service.exception.AuthCodeException;
 import de.adorsys.psd2.oauth.service.model.TokenBO;

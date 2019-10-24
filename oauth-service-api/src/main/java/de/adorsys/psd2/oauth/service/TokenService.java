@@ -13,5 +13,7 @@ public interface TokenService {
 
     TokenBO save(TokenBO token);
 
+    String attachState(String scaOAuthLink, String aspspId, String psuId);
+
     void delete(String id);
 }
