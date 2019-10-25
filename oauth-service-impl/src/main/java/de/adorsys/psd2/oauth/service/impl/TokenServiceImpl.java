@@ -128,16 +128,20 @@ public class TokenServiceImpl implements TokenService {
         Matcher matcher = STATE_PATTERN.matcher(scaOAuthLink);
 
         if (matcher.find()) {
-            StringBuffer sb = new StringBuffer();
-            String quote = Pattern.quote(matcher.group(1));
-            matcher.appendReplacement(sb, matcher.group(0).replaceFirst(quote, encodedState));
-            matcher.appendTail(sb);
-            scaOAuthLink = sb.toString();
+            scaOAuthLink = replaceExistingState(encodedState, matcher);
         } else {
             scaOAuthLink += STATE_PARAMETER + encodedState;
         }
 
         return scaOAuthLink;
+    }
+
+    private String replaceExistingState(String encodedState, Matcher matcher) {
+        StringBuffer sb = new StringBuffer();
+        String quote = Pattern.quote(matcher.group(1));
+        matcher.appendReplacement(sb, matcher.group(0).replaceFirst(quote, encodedState));
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 
     @Override
