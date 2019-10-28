@@ -4,6 +4,7 @@ import de.adorsys.psd2.oauth.exception.NotFoundRestException;
 import de.adorsys.psd2.oauth.exception.RestException;
 import de.adorsys.psd2.oauth.model.AccessTokenTO;
 import de.adorsys.psd2.oauth.service.TokenService;
+import de.adorsys.psd2.oauth.service.exception.RefreshTokenException;
 import de.adorsys.psd2.oauth.service.exception.TokenNotFoundServiceException;
 import de.adorsys.psd2.oauth.service.model.TokenBO;
 import io.swagger.annotations.ApiOperation;
@@ -31,9 +32,9 @@ public class TokenController {
     public AccessTokenTO getById(@PathVariable UUID id) throws RestException {
         try {
             TokenBO token = tokenService.findById(id.toString());
-            //todo: implement refresh token functionality. issue #[XS2AAD-46]
             return new AccessTokenTO(token.getAccessToken());
-        } catch (TokenNotFoundServiceException e) {
+        } catch (TokenNotFoundServiceException | RefreshTokenException e) {
+            //todo: fix me
             throw new NotFoundRestException(e.getMessage()).withDevMessage(e.getMessage());
         }
     }

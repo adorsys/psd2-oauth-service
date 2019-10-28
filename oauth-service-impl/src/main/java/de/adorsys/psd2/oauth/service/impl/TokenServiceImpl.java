@@ -7,7 +7,8 @@ import de.adorsys.psd2.oauth.repository.exception.TokenNotFoundDBException;
 import de.adorsys.psd2.oauth.repository.model.TokenPO;
 import de.adorsys.psd2.oauth.service.TokenService;
 import de.adorsys.psd2.oauth.service.converter.TokenBOConverter;
-import de.adorsys.psd2.oauth.service.exception.ExchangeAuthCodeException;
+import de.adorsys.psd2.oauth.service.exception.ExchangeCodeException;
+import de.adorsys.psd2.oauth.service.exception.RefreshTokenException;
 import de.adorsys.psd2.oauth.service.exception.TokenNotFoundServiceException;
 import de.adorsys.psd2.oauth.service.model.OauthStateBO;
 import de.adorsys.psd2.oauth.service.model.TokenBO;
@@ -15,12 +16,15 @@ import de.adorsys.xs2a.adapter.api.TokenResponseTO;
 import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
 import de.adorsys.xs2a.adapter.service.RequestHeaders;
 import feign.FeignException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,9 +42,13 @@ public class TokenServiceImpl implements TokenService {
     static final String STATE_PARAMETER = "&state=";
 
     private final TokenRepository repository;
-    private final TokenBOConverter converter;
+    private TokenBOConverter converter;
     private Oauth2Client oauth2Client;
     private ObjectMapper objectMapper;
+    @Value("${oauth.refresh-token-implicitly.enabled:false}")
+    private boolean isRefreshTokenImplicitlyEnabled;
+    @Value("${oauth.refresh-token-implicitly.seconds-before-expiration:30}")
+    private long secondsBeforeExpiration;
 
     public TokenServiceImpl(TokenRepository repository, TokenBOConverter converter, Oauth2Client oauth2Client, ObjectMapper objectMapper) {
         this.repository = repository;
@@ -50,23 +58,41 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenBO exchangeAuthCode(String code, String redirectUri, String clientId, String state) throws ExchangeAuthCodeException {
+    public TokenBO exchangeAuthCode(String code, String redirectUri, String clientId, String state) throws ExchangeCodeException {
         logger.info("Exchange auth code by token");
         OauthStateBO stateObj = decodeState(state);
 
-        Map<String, String> headers = buildHeaders(stateObj);
-        Map<String, String> params = buildParams(code, redirectUri, clientId);
+        Map<String, String> headers = buildHeaders(stateObj.getAspspId());
+        Map<String, String> params = buildAuthCodeParams(code, redirectUri, clientId);
 
         TokenResponseTO token;
         try {
             token = oauth2Client.getToken(headers, params);
         } catch (IOException | FeignException e) {
-            throw new ExchangeAuthCodeException("xs2a-adapter_error", e.getMessage());
+            throw new ExchangeCodeException("xs2a-adapter_error", e.getMessage());
         }
-        return converter.toTokenBO(token, stateObj.getClientId(), stateObj.getAspspId());
+        LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(token.getExpiresInSeconds());
+        return converter.toTokenBO(token, stateObj.getClientId(), stateObj.getAspspId(), expirationDate);
     }
 
-    private Map<String, String> buildParams(String code, String redirectUri, String clientId) {
+    @Override
+    public TokenBO refreshToken(TokenBO existingToken) throws RefreshTokenException {
+        logger.info("Refresh token");
+
+        Map<String, String> headers = buildHeaders(existingToken.getAspspId());
+        Map<String, String> params = buildRefreshTokenParams(existingToken.getRefreshToken());
+
+        TokenResponseTO token;
+        try {
+            token = oauth2Client.getToken(headers, params);
+        } catch (IOException | FeignException e) {
+            throw new RefreshTokenException("xs2a-adapter_error", e.getMessage());
+        }
+        LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(token.getExpiresInSeconds());
+        return converter.toTokenBO(token, existingToken.getId(), existingToken.getAspspId(), expirationDate);
+    }
+
+    private Map<String, String> buildAuthCodeParams(String code, String redirectUri, String clientId) {
         Map<String, String> params = new HashMap<>();
         params.put("grant_type", "authorization_code");
         params.put("code", code);
@@ -75,31 +101,50 @@ public class TokenServiceImpl implements TokenService {
         return params;
     }
 
-    private Map<String, String> buildHeaders(OauthStateBO state) {
+    private Map<String, String> buildRefreshTokenParams(String refreshToken) {
+        Map<String, String> params = new HashMap<>();
+        params.put("grant_type", "refresh_token");
+        params.put("refresh_token", refreshToken);
+        return params;
+    }
+
+    private Map<String, String> buildHeaders(String apspsId) {
         Map<String, String> headers = new HashMap<>();
-        headers.put(RequestHeaders.X_GTW_ASPSP_ID, state.getAspspId());
+        headers.put(RequestHeaders.X_GTW_ASPSP_ID, apspsId);
         headers.put(RequestHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         return headers;
     }
 
 
-    private OauthStateBO decodeState(String state) throws ExchangeAuthCodeException {
+    private OauthStateBO decodeState(String state) throws ExchangeCodeException {
         OauthStateBO stateObj;
         try {
             byte[] bytes = Base64.getDecoder().decode(state.getBytes());
             stateObj = objectMapper.readValue(bytes, OauthStateBO.class);
         } catch (IOException e) {
-            throw new ExchangeAuthCodeException("Could not decode state. Seems it was corrupted", "corrupted_state");
+            throw new ExchangeCodeException("Could not decode state. Seems it was corrupted", "corrupted_state");
         }
         return stateObj;
     }
 
     @Override
-    public TokenBO findById(String id) throws TokenNotFoundServiceException {
+    public TokenBO findById(String id) throws TokenNotFoundServiceException, RefreshTokenException {
         logger.info("Get token by id={}", id);
         try {
             TokenPO tokenPO = repository.findById(id);
-            return converter.toTokenBO(tokenPO);
+            TokenBO existingToken = converter.toTokenBO(tokenPO);
+
+            logger.info("Refresh token implicitly is {}", isRefreshTokenImplicitlyEnabled ? "enable" : "disable");
+            if (isRefreshTokenImplicitlyEnabled) {
+                String refreshToken = tokenPO.getRefreshToken();
+                LocalDateTime beforeExpirationTime = tokenPO.getExpirationDate().minusSeconds(secondsBeforeExpiration);
+                if (StringUtils.isNotBlank(refreshToken) && beforeExpirationTime.isBefore(LocalDateTime.now())) {
+                    TokenBO newToken = refreshToken(existingToken);
+                    return save(newToken);
+                }
+            }
+
+            return existingToken;
         } catch (TokenNotFoundDBException e) {
             throw new TokenNotFoundServiceException(e.getMessage());
         }
@@ -156,5 +201,17 @@ public class TokenServiceImpl implements TokenService {
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("State object couldn't be encoded");
         }
+    }
+
+    void setRefreshTokenImplicitlyEnabled(boolean refreshTokenImplicitlyEnabled) {
+        isRefreshTokenImplicitlyEnabled = refreshTokenImplicitlyEnabled;
+    }
+
+    void setSecondsBeforeExpiration(long secondsBeforeExpiration) {
+        this.secondsBeforeExpiration = secondsBeforeExpiration;
+    }
+
+    void setConverter(TokenBOConverter converter) {
+        this.converter = converter;
     }
 }

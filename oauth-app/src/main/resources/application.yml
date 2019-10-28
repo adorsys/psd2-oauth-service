@@ -22,6 +22,9 @@ oauth:
     url:
   get-token-endpoint:
     enabled: false
+  refresh-token-implicitly:
+    enabled: true
+    seconds-before-expiration: 60
   redirect:
     success-url:
     error-url:
@@ -61,6 +64,9 @@ oauth:
     url: http://localhost:8082
   get-token-endpoint:
     enabled: true
+  refresh-token-implicitly:
+    enabled: true
+    seconds-before-expiration: 60
   redirect:
     success-url: /success
     error-url: /error

@@ -1,6 +1,7 @@
 package de.adorsys.psd2.oauth.service.model;
 
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TokenBO {
@@ -8,6 +9,7 @@ public class TokenBO {
     private String accessToken;
     private String tokenType;
     private Long expiresInSeconds;
+    private LocalDateTime expirationDate;
     private String refreshToken;
     private String scope;
     private String aspspId;
@@ -44,6 +46,14 @@ public class TokenBO {
         this.expiresInSeconds = expiresInSeconds;
     }
 
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -77,6 +87,7 @@ public class TokenBO {
                        Objects.equals(accessToken, tokenBO.accessToken) &&
                        Objects.equals(tokenType, tokenBO.tokenType) &&
                        Objects.equals(expiresInSeconds, tokenBO.expiresInSeconds) &&
+                       Objects.equals(expirationDate, tokenBO.expirationDate) &&
                        Objects.equals(refreshToken, tokenBO.refreshToken) &&
                        Objects.equals(scope, tokenBO.scope) &&
                        Objects.equals(aspspId, tokenBO.aspspId);
@@ -84,16 +95,17 @@ public class TokenBO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, refreshToken, scope, aspspId);
+        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, expirationDate, refreshToken, scope, aspspId);
     }
 
     @Override
     public String toString() {
         return "TokenBO{" +
-                       "id=" + id +
+                       "id='" + id + '\'' +
                        ", accessToken='" + accessToken + '\'' +
                        ", tokenType='" + tokenType + '\'' +
                        ", expiresInSeconds=" + expiresInSeconds +
+                       ", expirationDate=" + expirationDate +
                        ", refreshToken='" + refreshToken + '\'' +
                        ", scope='" + scope + '\'' +
                        ", aspspId='" + aspspId + '\'' +

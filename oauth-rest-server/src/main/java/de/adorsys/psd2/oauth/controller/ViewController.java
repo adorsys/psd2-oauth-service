@@ -17,6 +17,7 @@
 package de.adorsys.psd2.oauth.controller;
 
 import de.adorsys.psd2.oauth.service.TokenService;
+import de.adorsys.psd2.oauth.service.exception.RefreshTokenException;
 import de.adorsys.psd2.oauth.service.exception.TokenNotFoundServiceException;
 import de.adorsys.psd2.oauth.service.model.TokenBO;
 import org.springframework.context.annotation.Profile;
@@ -35,7 +36,7 @@ public class ViewController {
     }
 
     @GetMapping("/success")
-    public String successPage(Model model) throws TokenNotFoundServiceException {
+    public String successPage(Model model) throws TokenNotFoundServiceException, RefreshTokenException {
         String clientId = (String) model.asMap().get("clientId");
         TokenBO token = tokenService.findById(clientId);
         model.addAttribute("token", token.getAccessToken());

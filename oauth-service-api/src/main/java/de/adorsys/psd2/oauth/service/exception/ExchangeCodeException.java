@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.oauth.service.exception;
 
-public class ExchangeAuthCodeException extends AuthCodeException {
+public class ExchangeCodeException extends AuthCodeException {
 
-    public ExchangeAuthCodeException(String message, String code) {
+    public ExchangeCodeException(String message, String code) {
         super(message);
         this.code = code;
     }
-
 }
