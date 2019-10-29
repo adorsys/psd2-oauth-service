@@ -16,7 +16,6 @@ import de.adorsys.xs2a.adapter.api.TokenResponseTO;
 import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
 import de.adorsys.xs2a.adapter.service.RequestHeaders;
 import feign.FeignException;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +24,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
@@ -72,7 +69,7 @@ public class TokenServiceImpl implements TokenService {
             throw new ExchangeCodeException("xs2a-adapter_error", e.getMessage());
         }
         LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(token.getExpiresInSeconds());
-        return converter.toTokenBO(token, stateObj.getClientId(), stateObj.getAspspId(), expirationDate);
+        return converter.toTokenBO(token, stateObj.getClientId(), stateObj.getAspspId(), expirationDate, clientId);
     }
 
     @Override
@@ -80,7 +77,7 @@ public class TokenServiceImpl implements TokenService {
         logger.info("Refresh token");
 
         Map<String, String> headers = buildHeaders(existingToken.getAspspId());
-        Map<String, String> params = buildRefreshTokenParams(existingToken.getRefreshToken());
+        Map<String, String> params = buildRefreshTokenParams(existingToken.getRefreshToken(), existingToken.getClientId());
 
         TokenResponseTO token;
         try {
@@ -89,7 +86,7 @@ public class TokenServiceImpl implements TokenService {
             throw new RefreshTokenException("xs2a-adapter_error", e.getMessage());
         }
         LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(token.getExpiresInSeconds());
-        return converter.toTokenBO(token, existingToken.getId(), existingToken.getAspspId(), expirationDate);
+        return converter.toTokenBO(token, existingToken.getId(), existingToken.getAspspId(), expirationDate, existingToken.getClientId());
     }
 
     private Map<String, String> buildAuthCodeParams(String code, String redirectUri, String clientId) {
@@ -101,10 +98,11 @@ public class TokenServiceImpl implements TokenService {
         return params;
     }
 
-    private Map<String, String> buildRefreshTokenParams(String refreshToken) {
+    private Map<String, String> buildRefreshTokenParams(String refreshToken, String clientId) {
         Map<String, String> params = new HashMap<>();
         params.put("grant_type", "refresh_token");
         params.put("refresh_token", refreshToken);
+        params.put("client_id", clientId);
         return params;
     }
 
@@ -137,8 +135,7 @@ public class TokenServiceImpl implements TokenService {
             logger.info("Refresh token implicitly is {}", isRefreshTokenImplicitlyEnabled ? "enable" : "disable");
             if (isRefreshTokenImplicitlyEnabled) {
                 String refreshToken = tokenPO.getRefreshToken();
-                LocalDateTime beforeExpirationTime = tokenPO.getExpirationDate().minusSeconds(secondsBeforeExpiration);
-                if (StringUtils.isNotBlank(refreshToken) && beforeExpirationTime.isBefore(LocalDateTime.now())) {
+                if (isNotBlank(refreshToken) && isReadyToRefresh(tokenPO)) {
                     TokenBO newToken = refreshToken(existingToken);
                     return save(newToken);
                 }
@@ -148,6 +145,15 @@ public class TokenServiceImpl implements TokenService {
         } catch (TokenNotFoundDBException e) {
             throw new TokenNotFoundServiceException(e.getMessage());
         }
+    }
+
+    private boolean isReadyToRefresh(TokenPO tokenPO) {
+        Optional<LocalDateTime> expirationDate = Optional.ofNullable(tokenPO.getExpirationDate());
+        if (expirationDate.isPresent()) {
+            LocalDateTime beforeExpirationTime = expirationDate.get().minusSeconds(secondsBeforeExpiration);
+            return beforeExpirationTime.isBefore(LocalDateTime.now());
+        }
+        return true;
     }
 
     @Override

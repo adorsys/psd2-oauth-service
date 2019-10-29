@@ -2,10 +2,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <properties>
-        <spring-data-redis.version>2.0.3.RELEASE</spring-data-redis.version>
-        <jedis.version>2.9.0</jedis.version>
-    </properties>
 
     <parent>
         <groupId>de.adorsys.psd2.oauth</groupId>
@@ -14,8 +10,14 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>oauth-db-impl</artifactId>
-    <name>oauth-db-impl</name>
+    <artifactId>oauth-db-impl-redis</artifactId>
+    <name>oauth-db-impl-redis</name>
+
+    <properties>
+        <spring-data-redis.version>2.0.3.RELEASE</spring-data-redis.version>
+        <jedis.version>2.9.0</jedis.version>
+        <jackson.version>2.10.0</jackson.version>
+    </properties>
 
     <dependencies>
 
@@ -40,6 +42,24 @@
         </dependency>
 
         <!-- other dependencies -->
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.mapstruct</groupId>

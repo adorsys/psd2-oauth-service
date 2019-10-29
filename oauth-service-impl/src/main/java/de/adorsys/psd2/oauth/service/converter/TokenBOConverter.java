@@ -17,5 +17,6 @@ public interface TokenBOConverter {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "aspspId", source = "aspspId")
     @Mapping(target = "expirationDate", source = "expirationDate")
-    TokenBO toTokenBO(TokenResponseTO to, String id, String aspspId, LocalDateTime expirationDate);
+    @Mapping(target = "clientId", source = "clientId")
+    TokenBO toTokenBO(TokenResponseTO to, String id, String aspspId, LocalDateTime expirationDate, String clientId);
 }

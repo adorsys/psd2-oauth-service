@@ -1,6 +1,12 @@
 package de.adorsys.psd2.oauth.repository.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TokenEntity implements Serializable {
@@ -10,6 +16,10 @@ public class TokenEntity implements Serializable {
     private Long expiresInSeconds;
     private String refreshToken;
     private String scope;
+    @JsonSerialize(using = ToStringSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime expirationDate;
+    private String clientId;
     private String aspspId;
 
     public String getId() {
@@ -60,6 +70,22 @@ public class TokenEntity implements Serializable {
         this.scope = scope;
     }
 
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
     public String getAspspId() {
         return aspspId;
     }
@@ -79,23 +105,27 @@ public class TokenEntity implements Serializable {
                        Objects.equals(expiresInSeconds, that.expiresInSeconds) &&
                        Objects.equals(refreshToken, that.refreshToken) &&
                        Objects.equals(scope, that.scope) &&
+                       Objects.equals(expirationDate, that.expirationDate) &&
+                       Objects.equals(clientId, that.clientId) &&
                        Objects.equals(aspspId, that.aspspId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, refreshToken, scope, aspspId);
+        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, refreshToken, scope, expirationDate, clientId, aspspId);
     }
 
     @Override
     public String toString() {
         return "TokenEntity{" +
-                       "id=" + id +
+                       "id='" + id + '\'' +
                        ", accessToken='" + accessToken + '\'' +
                        ", tokenType='" + tokenType + '\'' +
                        ", expiresInSeconds=" + expiresInSeconds +
                        ", refreshToken='" + refreshToken + '\'' +
                        ", scope='" + scope + '\'' +
+                       ", expirationDate=" + expirationDate +
+                       ", clientId='" + clientId + '\'' +
                        ", aspspId='" + aspspId + '\'' +
                        '}';
     }

@@ -12,6 +12,7 @@ public class TokenPO {
     private LocalDateTime expirationDate;
     private String refreshToken;
     private String scope;
+    private String clientId;
     private String aspspId;
 
     public String getId() {
@@ -70,6 +71,14 @@ public class TokenPO {
         this.scope = scope;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
     public String getAspspId() {
         return aspspId;
     }
@@ -90,12 +99,13 @@ public class TokenPO {
                        Objects.equals(expirationDate, tokenPO.expirationDate) &&
                        Objects.equals(refreshToken, tokenPO.refreshToken) &&
                        Objects.equals(scope, tokenPO.scope) &&
+                       Objects.equals(clientId, tokenPO.clientId) &&
                        Objects.equals(aspspId, tokenPO.aspspId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, expirationDate, refreshToken, scope, aspspId);
+        return Objects.hash(id, accessToken, tokenType, expiresInSeconds, expirationDate, refreshToken, scope, clientId, aspspId);
     }
 
     @Override
@@ -108,6 +118,7 @@ public class TokenPO {
                        ", expirationDate=" + expirationDate +
                        ", refreshToken='" + refreshToken + '\'' +
                        ", scope='" + scope + '\'' +
+                       ", clientId='" + clientId + '\'' +
                        ", aspspId='" + aspspId + '\'' +
                        '}';
     }

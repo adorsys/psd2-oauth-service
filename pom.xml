@@ -11,7 +11,7 @@
 
     <modules>
         <module>oauth-db-api</module>
-        <module>oauth-db-impl</module>
+        <module>oauth-db-impl-redis</module>
         <module>oauth-service-api</module>
         <module>oauth-service-impl</module>
         <module>oauth-rest-server</module>
