@@ -1,5 +1,9 @@
 package de.adorsys.psd2.oauth.exception;
 
+import de.adorsys.psd2.oauth.service.exception.AuthCodeException;
+import de.adorsys.psd2.oauth.service.exception.ExchangeCodeException;
+import de.adorsys.psd2.oauth.service.exception.RefreshTokenException;
+import de.adorsys.psd2.oauth.service.exception.TokenNotFoundServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,20 @@ public class ExceptionAdvisor {
         logger.error(ex.getMessage(), ex);
         Map<String, String> body = getHandlerContent(ex.getCode(), ex.getMessage(), ex.devMessage);
         return new ResponseEntity<>(body, ex.getStatus());
+    }
+
+    @ExceptionHandler(TokenNotFoundRestException.class)
+    public ResponseEntity<Map> tokenNotFoundException(TokenNotFoundRestException ex) {
+        logger.error(ex.getMessage(), ex);
+        Map<String, String> body = getHandlerContent(HttpStatus.NOT_FOUND, ex.getMessage(), ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({RefreshTokenException.class, ExchangeCodeException.class})
+    public ResponseEntity<Map> refreshToken(AuthCodeException ex) {
+        logger.error(ex.getMessage(), ex);
+        Map<String, String> body = getHandlerContent(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 
     private Map<String, String> getHandlerContent(HttpStatus status, String message, String devMessage) {

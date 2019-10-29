@@ -1,7 +1,6 @@
 package de.adorsys.psd2.oauth.controller;
 
-import de.adorsys.psd2.oauth.exception.NotFoundRestException;
-import de.adorsys.psd2.oauth.exception.RestException;
+import de.adorsys.psd2.oauth.exception.TokenNotFoundRestException;
 import de.adorsys.psd2.oauth.model.AccessTokenTO;
 import de.adorsys.psd2.oauth.service.TokenService;
 import de.adorsys.psd2.oauth.service.exception.RefreshTokenException;
@@ -26,16 +25,15 @@ public class TokenController {
         this.tokenService = tokenService;
     }
 
-
     @ApiOperation("Get token by id")
     @GetMapping(TOKEN_BY_ID_URI)
-    public AccessTokenTO getById(@PathVariable UUID id) throws RestException {
+    public AccessTokenTO getById(@PathVariable UUID id) throws RefreshTokenException {
+        TokenBO token = null;
         try {
-            TokenBO token = tokenService.findById(id.toString());
-            return new AccessTokenTO(token.getAccessToken());
-        } catch (TokenNotFoundServiceException | RefreshTokenException e) {
-            //todo: fix me
-            throw new NotFoundRestException(e.getMessage()).withDevMessage(e.getMessage());
+            token = tokenService.findById(id.toString());
+        } catch (TokenNotFoundServiceException e) {
+            throw new TokenNotFoundRestException(e.getMessage());
         }
+        return new AccessTokenTO(token.getAccessToken());
     }
 }

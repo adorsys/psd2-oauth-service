@@ -11,7 +11,6 @@ import de.adorsys.psd2.oauth.service.model.OauthStateBO;
 import de.adorsys.psd2.oauth.service.model.TokenBO;
 import de.adorsys.xs2a.adapter.api.TokenResponseTO;
 import de.adorsys.xs2a.adapter.api.remote.Oauth2Client;
-import feign.FeignException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
