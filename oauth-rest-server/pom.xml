@@ -14,7 +14,7 @@
     <name>oauth-rest-server</name>
 
     <properties>
-        <spring-webmvc.version>5.1.10.RELEASE</spring-webmvc.version>
+        <spring-webmvc.version>5.2.0.RELEASE</spring-webmvc.version>
     </properties>
 
     <dependencies>
